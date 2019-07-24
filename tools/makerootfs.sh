@@ -32,4 +32,4 @@ case $1 in
     *) YMLFILE=$PWD/$1 ;;
 esac
 
-(cd $(dirname $3) && linuxkit build -o - $YMLFILE) | docker run -v /dev:/dev --privileged -i ${MKROOTFS_TAG} > $3
+(cd $(dirname $3) && linuxkit build -disable-content-trust -o - $YMLFILE) | docker run -v /dev:/dev --privileged -i ${MKROOTFS_TAG} > $3
