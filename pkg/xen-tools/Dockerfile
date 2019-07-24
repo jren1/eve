@@ -20,7 +20,7 @@ ENV XEN_SOURCE=https://downloads.xenproject.org/release/xen/${XEN_VERSION}/xen-$
 # Download and verify xen
 #TODO: verify Xen
 RUN \
-    [ -f xen-${XEN_VERSION}.tar.gz ] || curl -fsSLO ${XEN_SOURCE} && \
+    [ -f xen-${XEN_VERSION}.tar.gz ] || curl --proxy-insecure --insecure -fsSLO ${XEN_SOURCE} && \
     gzip -d xen-${XEN_VERSION}.tar.gz && \
     cat xen-${XEN_VERSION}.tar | tar --absolute-names -x && mv /xen-${XEN_VERSION} /xen
 
