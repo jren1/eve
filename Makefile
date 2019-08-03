@@ -72,7 +72,7 @@ QEMU_OPTS_arm64= -machine virt,gic_version=3 -machine virtualization=true -cpu c
 # -drive file=./bios/flash0.img,format=raw,if=pflash -drive file=./bios/flash1.img,format=raw,if=pflash
 # [ -f bios/flash1.img ] || dd if=/dev/zero of=bios/flash1.img bs=1048576 count=64
 QEMU_OPTS_amd64= -cpu SandyBridge
-QEMU_OPTS_COMMON= -smbios type=1,serial=31415926 -m 4096 -smp 4 -display none -serial mon:stdio -bios $(BIOS_IMG) \
+QEMU_OPTS_COMMON= -smbios type=1,serial=31415926 -m 2048 -smp 4 -display none -serial mon:stdio -bios $(BIOS_IMG) \
         -rtc base=utc,clock=rt \
         -netdev user,id=eth0,net=192.168.1.0/24,dhcpstart=192.168.1.10,hostfwd=tcp::$(SSH_PORT)-:22 -device e1000,netdev=eth0 \
         -netdev user,id=eth1,net=192.168.2.0/24,dhcpstart=192.168.2.10 -device e1000,netdev=eth1
@@ -263,7 +263,7 @@ $(GOBUILDER):
 ifneq ($(BUILD),local)
 	@echo "Creating go builder image for user $(USER)"
 	@docker build --build-arg GOVER=$(GOVER) --build-arg USER=$(USER) --build-arg GROUP=$(GROUP) \
-                      --build-arg UID=$(UID) --build-arg GID=$(GID) -t $@ build-tools/src/scripts >/dev/null
+                      --build-arg UID=$(UID) --build-arg GID=$(GID) -t $@ build-tools/src/scripts
 	@echo "$@ docker container is ready to use"
 endif
 
