@@ -102,7 +102,7 @@ fi
 
 EVE_VERSION=${EVE_VERSION:-`eve_version`$ARCH}
 
-KERNEL_TAG=$(linuxkit_tag pkg/kernel)
+KERNEL_TAG=$(linuxkit_tag pkg/acrn-kernel)
 FW_TAG=$(linuxkit_tag pkg/fw)
 ACRN_TAG=$(linuxkit_tag pkg/acrn)
 GRUB_TAG=$(linuxkit_tag pkg/grub)

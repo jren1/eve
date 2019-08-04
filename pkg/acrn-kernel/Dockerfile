@@ -12,6 +12,7 @@ RUN swupd mirror
 COPY acrn-kernel /acrn-kernel
 RUN ls -l /acrn-kernel
 WORKDIR /acrn-kernel
+RUN mkdir /out
 
 RUN cp kernel_config_sos .config && \
     make olddefconfig && \
@@ -35,8 +36,8 @@ RUN mkdir -p /tmp/kernel-headers/usr && \
 RUN DVER=$(basename $(find /tmp/kernel-modules/lib/modules/ -mindepth 1 -maxdepth 1)) && \
     dir=/tmp/usr/src/linux-headers-$DVER && \
     mkdir -p $dir && \
-    cp /linux/.config $dir && \
-    cp /linux/Module.symvers $dir && \
+    cp /acrn-kernel/.config $dir && \
+    cp /acrn-kernel/Module.symvers $dir && \
     find . -path './include/*' -prune -o \
            -path './arch/*/include' -prune -o \
            -path './scripts/*' -prune -o \
