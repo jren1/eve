@@ -13,6 +13,7 @@ COPY acrn-hypervisor /acrn-hypervisor
 RUN ls -l /acrn-hypervisor
 WORKDIR /acrn-hypervisor
 RUN make BOARD=generic FIRMWARE=sbl
+RUN	mkdir -p /out/boot
 RUN	mkdir -p /out/usr/bin
 RUN	mkdir -p /out/usr/lib/systemd/system
 RUN	mkdir -p /out/usr/share/acrn/bios
@@ -29,6 +30,7 @@ RUN	cp /acrn-hypervisor/build/misc/tools/libacrn-mngr.a /out/usr/bin/
 RUN	cp /acrn-hypervisor/build/misc/tools/acrnd.service /out/usr/lib/systemd/system/acrnd.service;
 RUN	cp /acrn-hypervisor/build/hypervisor/acrn.bin /out/usr/lib/acrn
 RUN	cp /acrn-hypervisor/build/hypervisor/acrn.32.out /out/usr/lib/acrn
+RUN	cp /acrn-hypervisor/build/hypervisor/acrn.32.out /out/boot
 RUN	cp /acrn-hypervisor/build/devicemodel/acrn-dm /out/usr/bin/
 RUN	cp /acrn-hypervisor/devicemodel/bios/* /out/usr/share/acrn/bios/
 RUN	cp /acrn-hypervisor/misc/efi-stub/clearlinux/acrn.conf /out/usr/share/acrn/samples/nuc/acrn.conf
