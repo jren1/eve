@@ -8,6 +8,7 @@ init:
   - GRUB_TAG
   - DTREES_TAG
   - XEN_TAG
+  - ACRN_TAG
   - DOM0ZTOOLS_TAG
 onboot:
   - name: rngd

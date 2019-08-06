@@ -12,7 +12,7 @@ RUN swupd mirror
 COPY acrn-hypervisor /acrn-hypervisor
 RUN ls -l /acrn-hypervisor
 WORKDIR /acrn-hypervisor
-RUN make BOARD=generic FIRMWARE=sbl
+RUN make BOARD=apl-up2 FIRMWARE=sbl
 RUN	mkdir -p /out/boot
 RUN	mkdir -p /out/usr/bin
 RUN	mkdir -p /out/usr/lib/systemd/system

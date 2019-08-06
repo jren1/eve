@@ -1,5 +1,5 @@
 kernel:
-  image: KERNEL_TAG
+  image: ACRN_KERN_TAG
   cmdline: "rootdelay=3"
 init:
   - linuxkit/init:v0.5

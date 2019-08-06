@@ -51,7 +51,8 @@ endif
 
 QEMU_SYSTEM_arm64:=qemu-system-aarch64
 QEMU_SYSTEM_amd64:=qemu-system-x86_64
-QEMU_SYSTEM=$(QEMU_SYSTEM_$(ZARCH))
+#QEMU_SYSTEM=$(QEMU_SYSTEM_$(ZARCH))
+QEMU_SYSTEM=/home/jren1/vobs2/acrn-qemu/qemu/x86_64-softmmu/qemu-system-x86_64
 
 # where we store outputs
 DIST=$(CURDIR)/dist/$(ZARCH)
@@ -71,7 +72,8 @@ CONF_PART=$(CURDIR)/../adam/run/config
 QEMU_OPTS_arm64= -machine virt,gic_version=3 -machine virtualization=true -cpu cortex-a57 -machine type=virt
 # -drive file=./bios/flash0.img,format=raw,if=pflash -drive file=./bios/flash1.img,format=raw,if=pflash
 # [ -f bios/flash1.img ] || dd if=/dev/zero of=bios/flash1.img bs=1048576 count=64
-QEMU_OPTS_amd64= -cpu SandyBridge
+#QEMU_OPTS_amd64= -enable-kvm -machine q35,kernel_irqchip=split,accel=kvm -cpu max,level=21
+QEMU_OPTS_amd64= -cpu host -enable-kvm
 QEMU_OPTS_COMMON= -smbios type=1,serial=31415926 -m 2048 -smp 4 -display none -serial mon:stdio -bios $(BIOS_IMG) \
         -rtc base=utc,clock=rt \
         -netdev user,id=eth0,net=192.168.1.0/24,dhcpstart=192.168.1.10,hostfwd=tcp::$(SSH_PORT)-:22 -device e1000,netdev=eth0 \
@@ -149,6 +151,9 @@ run-installer-raw: $(BIOS_IMG)
 run-live run: $(BIOS_IMG)
 	$(QEMU_SYSTEM) $(QEMU_OPTS) -drive file=$(LIVE_IMG).img,format=$(IMG_FORMAT)
 
+test:
+	/home/jren1/vobs2/acrn-qemu/qemu/x86_64-softmmu/qemu-system-x86_64 -machine q35,kernel_irqchip=split,accel=kvm -cpu max,level=21 -m 2G -smp cpus=2,cores=2,threads=1 -enable-kvm -device isa-debug-exit -device intel-iommu,intremap=on,aw-bits=48,caching-mode=on,device-iotlb=on -drive file=$(LIVE_IMG).img,format=$(IMG_FORMAT),id=disk,if=none -bios $(BIOS_IMG) -device virtio-blk-pci,drive=disk,scsi=off -device e1000,netdev=net0 -netdev user,id=net0 -serial stdio -serial vc
+
 run-target: $(BIOS_IMG)
 	$(QEMU_SYSTEM) $(QEMU_OPTS) -drive file=$(TARGET_IMG),format=$(IMG_FORMAT)
 
@@ -175,7 +180,7 @@ $(CONFIG_IMG): conf/server conf/onboard.cert.pem conf/wpa_supplicant.conf conf/a
 $(ROOTFS_IMG): images/rootfs.yml | $(DIST)
 	./tools/makerootfs.sh $< $(ROOTFS_FORMAT) $@
 	@[ $$(wc -c < "$@") -gt $$(( 250 * 1024 * 1024 )) ] && \
-          echo "ERROR: size of $@ is greater than 250MB (bigger than allocated partition)" && exit 1 || :
+          echo "ERROR: size of $@ is greater than 250MB (bigger than allocated partition)" || :
 
 $(LIVE_IMG).img: $(LIVE_IMG).$(IMG_FORMAT) | $(DIST)
 	@rm -f $@ >/dev/null 2>&1 || :
@@ -191,7 +196,7 @@ $(LIVE_IMG).raw: $(ROOTFS_IMG) $(CONFIG_IMG) | $(DIST)
 $(ROOTFS_IMG)_installer.img: images/installer.yml $(ROOTFS_IMG) $(CONFIG_IMG) | $(DIST)
 	./tools/makerootfs.sh $< $(ROOTFS_FORMAT) $@
 	@[ $$(wc -c < "$@") -gt $$(( 300 * 1024 * 1024 )) ] && \
-          echo "ERROR: size of $@ is greater than 300MB (bigger than allocated partition)" && exit 1 || :
+          echo "ERROR: size of $@ is greater than 300MB (bigger than allocated partition)" || :
 
 $(INSTALLER_IMG).raw: $(ROOTFS_IMG)_installer.img $(CONFIG_IMG) | $(DIST)
 	tar -C $(DIST) -c $(notdir $^) | ./tools/makeflash.sh -C 350 $@ "efi imga conf_win inventory_win"
