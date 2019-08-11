@@ -1,12 +1,19 @@
-FROM clearlinux_acrn:29090 as kernel-build
-ENV ACRN_PROJECT=https://github.com/projectacrn/acrn-hypervisor.git
+FROM alpine:3.8 as kernel-build
+RUN apk add --no-cache \
+	    gcc make libc-dev dev86 xz-dev perl bash python-dev \
+	    gettext iasl util-linux-dev ncurses-dev glib-dev \
+	    pixman-dev libaio-dev yajl-dev argp-standalone \
+	    linux-headers git patch texinfo curl tar bash socat openssh \
+        python3 libc-dev openssl-dev openssl libpciaccess libpciaccess-dev \
+	    bsd-compat-headers libusb libusb-dev
+RUN if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi
+RUN pip3 install kconfiglib
 ENV http_proxy http://lion.sh.intel.com:4097/
 ENV https_proxy http://lion.sh.intel.com:4097/
 ENV no_proxy .intel.com
 ENV all_proxy socks://lion.sh.intel.com:1080/
+ENV GIT_PROXY_COMMAND /oe-git-proxy
 
-# Download and verify ACRN
-RUN swupd mirror
 #RUN \
 #	[ -f acrn-hypervisor ] || git clone ${ACRN_PROJECT}
 COPY acrn-hypervisor /acrn-hypervisor
@@ -34,6 +41,7 @@ RUN	cp /acrn-hypervisor/build/hypervisor/acrn.32.out /out/boot
 RUN	cp /acrn-hypervisor/build/devicemodel/acrn-dm /out/usr/bin/
 RUN	cp /acrn-hypervisor/devicemodel/bios/* /out/usr/share/acrn/bios/
 RUN	cp /acrn-hypervisor/misc/efi-stub/clearlinux/acrn.conf /out/usr/share/acrn/samples/nuc/acrn.conf
+
 FROM scratch
 ENTRYPOINT []
 CMD []
