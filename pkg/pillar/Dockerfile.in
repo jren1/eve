@@ -36,8 +36,6 @@ FROM STRONGSWAN_TAG as strongswan
 FROM GPTTOOLS_TAG as gpttools
 # hadolint ignore=DL3006
 FROM WATCHDOG_TAG as watchdog
-# hadolint ignore=DL3006
-FROM ACRN_TAG as acrn
 
 FROM alpine:3.8
 RUN apk add --no-cache \
@@ -49,9 +47,6 @@ RUN apk add --no-cache \
 
 # The following is for xen-tools
 RUN [ `uname -m` = "aarch64" ] && apk add --no-cache libfdt || :
-
-# The following is for acrn
-RUN apk add --no-cache openssl libpciaccess libusb || :
 
 # We have to make sure configs survive in some location, but they don't pollute
 # the default /config (since that is expected to be an empty mount point)
@@ -68,7 +63,6 @@ ADD conf/lisp.config.base /var/tmp/zededa/lisp.config.base
 
 COPY --from=build /dist /opt/zededa/bin
 COPY --from=xen-tools / /
-COPY --from=acrn / /
 COPY --from=lisp / /
 COPY --from=gpttools / /
 COPY --from=dnsmasq /usr/sbin/dnsmasq /opt/zededa/bin/dnsmasq
