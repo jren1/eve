@@ -1,4 +1,42 @@
-FROM clearlinux_acrn:29090 as kernel-build
+FROM alpine:3.10 as kernel-build
+#linuxkit/alpine:f2f4db272c910d136380781a97e475013fabda8b AS kernel-build
+
+RUN apk update
+
+RUN apk add \
+    argp-standalone \
+    automake \
+    bash \
+    bc \
+    binutils-dev \
+    bison \
+    build-base \
+    curl \
+    diffutils \
+    flex \
+    git \
+    gmp-dev \
+    gnupg \
+    installkernel \
+    kmod \
+    libressl-dev \
+    linux-headers \
+    ncurses-dev \
+    python2 \
+    findutils \
+    sed \
+    squashfs-tools \
+    tar \
+    xz \
+    xz-dev \
+    zlib-dev \
+	openssl \
+	lz4 \
+	elfutils-libelf elfutils elfutils-dev
+
+# libunwind-dev pkg is missed from arm64 now, below statement will be removed if the pkg is available.
+RUN [ $(uname -m) == x86_64 ] && apk add libunwind-dev || true
+
 ENV ACRN_KERNEL=https://github.com/projectacrn/acrn-kernel.git
 ENV http_proxy http://lion.sh.intel.com:4097/
 ENV https_proxy http://lion.sh.intel.com:4097/
@@ -6,7 +44,6 @@ ENV no_proxy .intel.com
 ENV all_proxy socks://lion.sh.intel.com:1080/
 
 # Download and verify ACRN
-RUN swupd mirror
 #RUN \
 #	[ -f acrn-kernel ] || git clone ${ACRN_PROJECT}
 COPY acrn-kernel /acrn-kernel
