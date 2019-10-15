@@ -23,7 +23,7 @@ search_disk_uuid verify xzio xfs video gfxterm efi_gop gptprio chain probe reboo
 ENV GRUB_MODULES_x86_64="multiboot multiboot2 efi_uga"
 ENV GRUB_MODULES_aarch64="xen_boot"
 ENV GRUB_COMMIT=71f9e4ac44142af52c3fc1860436cf9e432bf764
-ENV GRUB_REPO=git://git.sv.gnu.org/grub.git
+ENV GRUB_REPO=https://git.savannah.gnu.org/git/grub.git
 
 COPY patches/* /patches/
 RUN mkdir /grub-lib && \
